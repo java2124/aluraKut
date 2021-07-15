@@ -24,6 +24,16 @@ function ProfileSidebar(propriedades) {
   )
 }
 
+function ProfileRelationsBox(propriedades){
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {propriedades.title} ({propriedades.items.length})
+      </h2>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
   const usuarioAleatorio = 'java2124';
   const [comunidades, setComunidades] = React.useState([{
@@ -31,20 +41,32 @@ export default function Home() {
     title: 'Eu odeio acordar cedo',
     image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg',
   }]);
-  const pessoasFavoritas = ['aarthurssl', 'LeoMoretti', 
-  'juunegreiros', 
-  'omariosouto', 
-  'peas', 
+  const pessoasFavoritas = ['aarthurssl', 'LeoMoretti',
+  'juunegreiros',
+  'omariosouto',
+  'peas',
   'marcobrunodev'
   ]
+
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(function (){
+    fetch('https://api.github.com/users/java2124/followers')
+    .then((respostaServidor) => {
+      return respostaServidor.json();
+    })
+    .then((respostaCompleta) => {
+      setSeguidores(respostaCompleta);
+    })
+  }, [])
 
   return (
     <>
       <AlurakutMenu />
-      <MainGrid> 
+      <MainGrid>
         <div className="profileArea" style = {{ gridArea : 'profileArea'}}>
           <ProfileSidebar  usuarioAleatorio = {usuarioAleatorio} />
-        </div> 
+        </div>
         <div className="welcomeArea" style = {{ gridArea : 'welcomeArea'}}>
           <Box>
             <h1 className="title">
@@ -69,8 +91,8 @@ export default function Home() {
               setComunidades(comunidadesAtualizadas);
             }}>
               <div>
-                <input 
-                  placeholder="Qual vai ser o nome da sua comunidade?" 
+                <input
+                  placeholder="Qual vai ser o nome da sua comunidade?"
                   name="title"
                   aria-label= "Qual vai ser o nome da sua comunidade?"
                   type="text"
@@ -78,8 +100,8 @@ export default function Home() {
               </div>
 
               <div>
-                <input 
-                  placeholder="Coloque uma URL para usarmos de capa" 
+                <input
+                  placeholder="Coloque uma URL para usarmos de capa"
                   name="image"
                   aria-label= "Coloque uma URL para usarmos de capa"
                 />
@@ -92,6 +114,9 @@ export default function Home() {
           </Box>
         </div>
         <div className="profileRelationsArea" style = {{ gridArea : 'profileRelationsArea'}}>
+          
+          <ProfileRelationsBox title = "Seguidores" items= {seguidores} />
+
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Comunidades ({comunidades.length})
@@ -115,7 +140,7 @@ export default function Home() {
             <h2 className="smallTitle">
               Pessoas da comunidade ({pessoasFavoritas.length})
             </h2>
-            
+
             <ul>
                 {pessoasFavoritas.map ((itemAtual) => {
                   return (
